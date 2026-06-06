@@ -1,0 +1,20 @@
+# OpenAI — enable in config.toml
+
+[[providers]]
+id = "openai"
+label = "OpenAI"
+base_url = "https://api.openai.com/v1"
+api_key_env = "OPENAI_API_KEY"
+enabled = true
+
+  [[providers.models]]
+  id = "gpt-4o"
+  label = "GPT-4o"
+  context_window = 128000
+  tags = ["code", "plan", "vision", "doc"]
+
+  [[providers.models]]
+  id = "gpt-4o-mini"
+  label = "GPT-4o Mini"
+  context_window = 128000
+  tags = ["chat", "fast", "vision"]

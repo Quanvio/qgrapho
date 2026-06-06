@@ -1,0 +1,13 @@
+# OpenRouter — one key, many models
+
+[[providers]]
+id = "openrouter"
+label = "OpenRouter"
+base_url = "https://openrouter.ai/api/v1"
+api_key_env = "OPENROUTER_API_KEY"
+enabled = true
+
+  [[providers.models]]
+  id = "openai/gpt-4o-mini"
+  label = "GPT-4o Mini (via OpenRouter)"
+  tags = ["chat", "fast", "code"]

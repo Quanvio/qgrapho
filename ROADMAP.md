@@ -2,8 +2,7 @@
 
 Public development plan for [QGrapho](https://github.com/quanvio/qgrapho).
 
-**Current release:** `v0.0.1` — **Early preview** (documentation + CLI scaffold + project layout).  
-Console, Agent Engine, and graph indexing ship in upcoming milestones.
+**Current release:** `v0.0.2` — **Phase 0 in progress** (config, providers, router config, MCP scaffold).
 
 ---
 
@@ -12,10 +11,11 @@ Console, Agent Engine, and graph indexing ship in upcoming milestones.
 | Area | Status |
 |------|--------|
 | Public docs & config | ✅ Available |
-| Python CLI (`qgrapho doctor`, `init`, …) | ✅ Scaffold — honest Phase 0 checks |
-| Console + Agent Engine | 🔲 Phase 0 |
+| Python CLI | ✅ Phase 0 — `init`, `provider`, `mcp`, `doctor`, `start` |
+| Model Router config | ✅ Generates `~/.qgrapho/litellm.config.yaml` |
+| Console + Agent Engine | 🔲 Phase 0 — set `QGRAPHO_*_BIN` when bundle ready |
 | Graph indexing | 🔲 Phase 1 |
-| QGrapho Cloud (`qgrapho.quanvio.com`) | 🔲 Enable when endpoint is live |
+| QGrapho Cloud | 🔲 Enable when endpoint is live |
 
 ---
 
@@ -24,9 +24,12 @@ Console, Agent Engine, and graph indexing ship in upcoming milestones.
 **Goal:** Console talks to your model provider; Graph MCP answers queries.
 
 - [ ] Pin `vendor/` submodules (`vendor.lock`)
-- [ ] Wire Console + Model Router (native install)
-- [ ] Wire Quanvio MCP in developer config
-- [ ] `qgrapho doctor` checks real binaries (not placeholders)
+- [x] `qgrapho init` writes provider preset to `config.toml`
+- [x] `qgrapho provider add/list`
+- [x] `qgrapho mcp init` — Graph Intelligence MCP config
+- [x] `qgrapho doctor` — real component checks
+- [x] Model Router config generation (`litellm.config.yaml`)
+- [ ] Wire Console + Agent Engine binaries
 - [ ] GitHub Release with install script + wheel
 
 **Exit criteria:** indexed repo returns symbols via `query_graph`; `qgrapho start` launches native stack.

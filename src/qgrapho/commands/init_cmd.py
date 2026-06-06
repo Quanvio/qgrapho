@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
-import shutil
-from pathlib import Path
+import os
 
-from qgrapho.paths import config_path, qgrapho_home, repo_config_example
+from qgrapho.commands.mcp_cmd import run_mcp_init
+from qgrapho.commands.provider import run_provider_add
+from qgrapho.config_store import ensure_config_file
+from qgrapho.paths import config_path, qgrapho_home
 
 
 PROVIDERS = (
@@ -20,27 +22,12 @@ PROVIDERS = (
 )
 
 
-def _ensure_config_template() -> None:
+def run_init() -> int:
     home = qgrapho_home()
     home.mkdir(parents=True, exist_ok=True)
     (home / "data" / "graphs").mkdir(parents=True, exist_ok=True)
-    (home / "config").mkdir(parents=True, exist_ok=True)
+    ensure_config_file()
 
-    dest = config_path()
-    if dest.is_file():
-        return
-
-    example = repo_config_example()
-    if example:
-        shutil.copy(example, dest)
-        shutil.copy(example, home / "config" / "qgrapho.example.toml")
-        return
-
-    dest.write_text('[product]\nname = "QGrapho"\n', encoding="utf-8")
-
-
-def run_init() -> int:
-    _ensure_config_template()
     print("QGrapho setup — pick a model provider\n")
     for num, label, _, _ in PROVIDERS:
         print(f"  {num}) {label}")
@@ -50,30 +37,28 @@ def run_init() -> int:
     _, label, env_key, preset = selected
     print(f"\nSelected: {label}")
 
-    if preset == "ollama":
-        print("Enable ollama in config.toml and run: ollama serve")
-    elif preset == "custom":
+    if preset == "custom":
         print(f"Edit {config_path()} — add [[providers]] with your base_url")
     elif preset == "qgrapho-cloud":
         print("Enable when https://qgrapho.quanvio.com/v1 is live.")
-        print(f"Run: qgrapho provider add {preset}  (coming soon)")
-        if env_key:
-            import os
-
-            if not os.environ.get(env_key):
-                key = input(f"{env_key}: ").strip()
-                if key:
-                    print(f"Set {env_key} in your shell profile (not stored by qgrapho init).")
-    elif env_key:
-        import os
-
-        if not os.environ.get(env_key):
+        if env_key and not os.environ.get(env_key):
             key = input(f"{env_key}: ").strip()
             if key:
-                print(f"Set {env_key} in your shell profile (not stored by qgrapho init).")
-        print(f"Next: qgrapho provider add {preset}  (coming soon)")
+                print(f"Set {env_key} in your shell profile (qgrapho does not store keys).")
+        run_provider_add("qgrapho-cloud")
+    elif preset == "ollama":
+        run_provider_add("ollama")
+        print("Start local models: ollama serve")
+    else:
+        if env_key and not os.environ.get(env_key):
+            key = input(f"{env_key}: ").strip()
+            if key:
+                print(f"Set {env_key} in your shell profile (qgrapho does not store keys).")
+        if run_provider_add(preset) != 0:
+            return 1
 
+    run_mcp_init()
     print(f"\nConfig: {config_path()}")
-    print("Docs:  https://github.com/quanvio/qgrapho/blob/main/docs/models.md")
     print("Run:   qgrapho doctor")
+    print("Run:   qgrapho start")
     return 0

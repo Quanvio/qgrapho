@@ -1,0 +1,18 @@
+# Ollama — local models, no API key
+
+[[providers]]
+id = "ollama"
+label = "Ollama (local)"
+base_url = "http://localhost:11434/v1"
+api_key_env = ""
+enabled = true
+
+  [[providers.models]]
+  id = "llama3.2"
+  label = "Llama 3.2"
+  tags = ["chat", "fast"]
+
+  [[providers.models]]
+  id = "qwen2.5-coder:7b"
+  label = "Qwen 2.5 Coder"
+  tags = ["code", "fast"]

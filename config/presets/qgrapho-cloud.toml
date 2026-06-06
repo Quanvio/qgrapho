@@ -1,0 +1,14 @@
+# QGrapho Cloud — optional hosted preset (enable when endpoint is live)
+
+[[providers]]
+id = "qgrapho-cloud"
+label = "QGrapho Cloud"
+base_url = "https://qgrapho.quanvio.com/v1"
+api_key_env = "QGRAPHO_CLOUD_API_KEY"
+enabled = false
+suggested = true
+
+  [[providers.models]]
+  id = "qgrapho-default"
+  label = "QGrapho Default"
+  tags = ["chat", "code"]

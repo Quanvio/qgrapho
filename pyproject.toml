@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "qgrapho"
-version = "0.0.1"
+version = "0.0.2"
 description = "Graph-native autonomous engineering platform by Quanvio"
 readme = "README.md"
 license = "MIT"
@@ -22,6 +22,8 @@ classifiers = [
 ]
 dependencies = [
   "tomli>=2.0; python_version < '3.11'",
+  "tomli-w>=1.0",
+  "pyyaml>=6.0",
 ]
 
 [project.optional-dependencies]

@@ -3,24 +3,19 @@
 from __future__ import annotations
 
 import os
-import sys
-from pathlib import Path
-from typing import Any
 
-if sys.version_info >= (3, 11):
-    import tomllib
-else:
-    import tomli as tomllib
+from qgrapho.config_store import load_config, save_config  # noqa: F401
+from qgrapho.paths import config_path
 
 
-def load_config(path: Path) -> dict[str, Any]:
-    if not path.is_file():
-        return {}
-    with path.open("rb") as fh:
-        return tomllib.load(fh)
+def config_exists() -> bool:
+    return config_path().is_file()
 
 
-def has_provider_key() -> bool:
+def has_provider_key(cfg: dict | None = None) -> bool:
+    from qgrapho.config_store import list_enabled_providers
+
+    config = cfg if cfg is not None else load_config()
     keys = (
         "OPENAI_API_KEY",
         "DEEPSEEK_API_KEY",
@@ -31,10 +26,12 @@ def has_provider_key() -> bool:
         "AZURE_OPENAI_API_KEY",
         "QGRAPHO_CLOUD_API_KEY",
     )
-    return any(os.environ.get(k) for k in keys)
-
-
-def config_exists() -> bool:
-    from qgrapho.paths import config_path
-
-    return config_path().is_file()
+    if any(os.environ.get(k) for k in keys):
+        return True
+    for provider in list_enabled_providers(config):
+        env_name = provider.get("api_key_env") or ""
+        if env_name and os.environ.get(env_name):
+            return True
+        if provider.get("id") == "ollama":
+            return True
+    return False
